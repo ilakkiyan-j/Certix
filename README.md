@@ -20,7 +20,7 @@ flowchart TD
     Client[API Client / Frontend] -->|1. POST /api/v1/jobs| API[FastAPI Application]
     API -->|2. Transactional Commit| DB[(PostgreSQL Database)]
     API -->|3. Enqueue job_id| Queue[Redis Queue: certix_jobs]
-    API -->>|4. 202 Accepted + status_url| Client
+    API -->|4. 202 Accepted + status_url| Client
 
     subgraph Background RQ Worker
         Queue -.->|5. Dequeue job_id| Worker[Certificate Worker]
@@ -35,7 +35,7 @@ flowchart TD
     Client -->|12. GET /api/v1/jobs/{id}/certificates| API
     Client -->|13. GET /api/v1/certificates/{id}/download| API
     API -->|14. Safe Stream PDF| Storage
-    API -->>|15. application/pdf| Client
+    API -->|15. application/pdf| Client
 ```
 
 ---
