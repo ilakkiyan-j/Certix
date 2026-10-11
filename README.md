@@ -17,25 +17,25 @@ Certix is a production-grade, asynchronous backend API built with **FastAPI**, *
 
 ```mermaid
 flowchart TD
-    Client[API Client / Frontend] -->|1. POST /api/v1/jobs| API[FastAPI Application]
-    API -->|2. Transactional Commit| DB[(PostgreSQL Database)]
-    API -->|3. Enqueue job_id| Queue[Redis Queue: certix_jobs]
-    API -->|4. 202 Accepted + status_url| Client
+    Client["API Client / Frontend"] -->|"1. POST /api/v1/jobs"| API["FastAPI Application"]
+    API -->|"2. Transactional Commit"| DB[("PostgreSQL Database")]
+    API -->|"3. Enqueue job_id"| Queue["Redis Queue: certix_jobs"]
+    API -->|"4. 202 Accepted + status_url"| Client
 
-    subgraph Background RQ Worker
-        Queue -.->|5. Dequeue job_id| Worker[Certificate Worker]
-        Worker -->|6. Fetch pending certs| DB
-        Worker -->|7. Render PDF Template| ReportLab[ReportLab PDF Engine]
-        ReportLab -->|8. Atomic write| Storage[(Local Storage / StorageService)]
-        Worker -->|9. Isolated Status Commit| DB
-        Worker -->|10. Reconcile Counters & Status| DB
+    subgraph WorkerProcess ["Background RQ Worker"]
+        Queue -.->|"5. Dequeue job_id"| Worker["Certificate Worker"]
+        Worker -->|"6. Fetch pending certs"| DB
+        Worker -->|"7. Render PDF Template"| ReportLab["ReportLab PDF Engine"]
+        ReportLab -->|"8. Atomic write"| Storage[("Local Storage / StorageService")]
+        Worker -->|"9. Isolated Status Commit"| DB
+        Worker -->|"10. Reconcile Counters & Status"| DB
     end
 
-    Client -->|11. GET /api/v1/jobs/{id}| API
-    Client -->|12. GET /api/v1/jobs/{id}/certificates| API
-    Client -->|13. GET /api/v1/certificates/{id}/download| API
-    API -->|14. Safe Stream PDF| Storage
-    API -->|15. application/pdf| Client
+    Client -->|"11. GET /api/v1/jobs/:id"| API
+    Client -->|"12. GET /api/v1/jobs/:id/certificates"| API
+    Client -->|"13. GET /api/v1/certificates/:id/download"| API
+    API -->|"14. Safe Stream PDF"| Storage
+    API -->|"15. application/pdf"| Client
 ```
 
 ---
